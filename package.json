@@ -12,6 +12,7 @@
   "dependencies": {
     "react": "16.13.1",
     "react-native": "0.63.4",
+    "react-native-anchor-point": "^1.0.1",
     "react-native-easy-gestures": "^2.2.4",
     "react-native-feather": "^1.0.2",
     "react-native-svg": "^12.1.0"

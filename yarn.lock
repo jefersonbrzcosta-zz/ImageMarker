@@ -5623,6 +5623,11 @@
   "resolved" "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
   "version" "16.13.1"
 
+"react-native-anchor-point@^1.0.1":
+  "integrity" "sha512-CQgXJ10fkvvNygfd+ikHkbuvVCRH0vX5HY9EwWtvfNV3VBNgBRJHOcPoCqNeOkGJRuHtGHKRtshE+uY8VtVgmA=="
+  "resolved" "https://registry.npmjs.org/react-native-anchor-point/-/react-native-anchor-point-1.0.1.tgz"
+  "version" "1.0.1"
+
 "react-native-easy-gestures@^2.2.4":
   "integrity" "sha512-a8rIqkAiE9pySVXEbZS3qQpzpVI4036LHkQDdByDlXIBplQhq9KMYVz0z+UxHlSF4He34FDGfuE/52n0wpDe6Q=="
   "resolved" "https://registry.npmjs.org/react-native-easy-gestures/-/react-native-easy-gestures-2.2.4.tgz"

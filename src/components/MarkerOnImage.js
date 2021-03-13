@@ -5,6 +5,24 @@ import {View, Text} from 'react-native';
 function MarkerOnImage({id, selected, scale}) {
   return (
     <View
+      // style={
+      //   ([
+      //     {
+      //       position: 'relative',
+      //       width: 100,
+      //       height: 100,
+      //       backgroundColor: 'rgba(255, 255, 255, 0.3)',
+      //     },
+      //   ],
+      //   {
+      //     transform: [
+      //       {
+      //         scale: 3,
+      //       },
+      //     ],
+      //   }
+      // )
+      // }
       style={{
         position: 'relative',
         width: 100,

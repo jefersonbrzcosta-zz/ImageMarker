@@ -28,9 +28,9 @@ function ImageMarker() {
   const [markerStyle, setMarkerStyle] = useState();
   const [imageStyle, setImageStyle] = useState();
   const dimensions = Dimensions.get('window');
-  const imageHeight = Math.round((dimensions.width * 9) / 16);
+  const imageHeight = 300;
   const imageWidth = dimensions.width;
-  console.log(fixedMarkers);
+  console.log(imageWidth);
   const makeMarkerSelected = (id) => {
     const array = markers.map((marker) => {
       if (marker.id === id) {
@@ -54,9 +54,43 @@ function ImageMarker() {
   };
 
   const fixMarker = (marker) => {
+    const styleMarker = {
+      left: markerStyle?.left ? markerStyle?.left : 0,
+      top: markerStyle?.top ? markerStyle?.top : 0,
+      transform: [
+        {
+          scale: markerStyle?.transform[0]?.scale
+            ? markerStyle?.transform[0].scale
+            : 1,
+        },
+        {
+          rotate: markerStyle?.transform[1]?.rotate
+            ? markerStyle?.transform[1].rotate
+            : '0deg',
+        },
+      ],
+    };
+
+    const styleImage = {
+      left: imageStyle?.left ? imageStyle?.left : 0,
+      top: imageStyle?.top ? imageStyle?.top : 0,
+      transform: [
+        {
+          scale: imageStyle?.transform[0]?.scale
+            ? imageStyle?.transform[0].scale
+            : 1,
+        },
+        {
+          rotate: imageStyle?.transform[1]?.rotate
+            ? imageStyle?.transform[1].rotate
+            : '0deg',
+        },
+      ],
+    };
+
     setFixedMarkers((prevFixMarkers) => [
       ...prevFixMarkers,
-      {marker, styleMarker: markerStyle, styleImage: imageStyle},
+      {marker, styleMarker, styleImage},
     ]);
     setMarkerStyle({});
   };
@@ -65,11 +99,19 @@ function ImageMarker() {
     <>
       <View
         style={{
-          display: 'flex',
-          flex: 1,
+          position: 'absolute',
+          // display: 'flex',
+          // flex: 1,
+          // maxWidth: imageWidth,
           // marginTop: 30,
+          // backgroundColor: 'reds',
         }}>
         <Gestures
+          // style={{
+          //   backgroundColor: 'blue',
+          //   // height: 100,
+          //   // maxWidth: 100,
+          // }}
           rotatable={false}
           draggable={image.move}
           scalable={image.move}
@@ -77,41 +119,58 @@ function ImageMarker() {
             console.log(styles, 'image');
             setImageStyle(styles);
           }}>
-          <TouchableWithoutFeedback
-            onPress={() =>
-              setImage((prev) => ({...prev, selected: !prev.selected}))
-            }>
-            <View>
-              <Image
-                style={{
-                  width: imageWidth,
-                  height: 300,
-                }}
-                source={{
-                  uri:
-                    'https://cdn.pixabay.com/photo/2015/08/02/22/18/barley-872000_960_720.jpg',
-                }}
-              />
-            </View>
-          </TouchableWithoutFeedback>
+          {/* <View style={{backgroundColor: 'blue', flex: 1}}> */}
+
+          {/* </View> */}
+
           {fixedMarkers?.map((marker, index) => {
             console.log(marker.styleImage, 'markers');
+            const markerScale = marker.styleMarker.transform[0]?.scale;
+            const markerRotate = marker.styleMarker.transform[1]?.rotate;
+            const imageScale = marker.styleImage.transform[0]?.scale;
+
+            console.log(marker.styleMarker, 'styleMarker');
+            console.log(marker.styleImage, 'styleImage');
+
             return (
               <>
                 <Gestures
+                  style={{}}
                   key={marker.id}
                   rotatable={marker.move}
                   draggable={marker.move}
                   scalable={marker.move}>
                   <View
+                    // style={{top: -100}}
                     style={[
                       {
                         position: 'absolute',
-                        left: marker.styleMarker.left - marker.styleImage.left,
+                        left:
+                          (marker.styleMarker.left +
+                            (392 * imageScale - 392) / 2) *
+                            (markerScale / imageScale) -
+                          25,
+                        // top:
+                        //   marker.styleMarker.top -
+                        //   (imageScale * 300 - 300) / 2 -
+                        //   180,
+                        // top: -250,
                         top:
-                          marker.styleMarker.top - marker.styleImage.top - 300,
+                          ((300 * imageScale - 300) / 2) *
+                            (markerScale / imageScale) -
+                          25,
                       },
-                      {transform: marker.styleMarker.transform},
+                      // {transform: marker.styleMarker.transform},
+                      {
+                        transform: [
+                          {
+                            scale: markerScale / imageScale,
+                          },
+                          {
+                            rotate: markerRotate,
+                          },
+                        ],
+                      },
                     ]}>
                     <MarkerOnImage
                       key={marker.id}
@@ -124,9 +183,22 @@ function ImageMarker() {
               </>
             );
           })}
+          <Image
+            style={{
+              width: imageWidth,
+              height: imageHeight,
+              backgroundColor: 'red',
+              zIndex: -1000,
+            }}
+            resizeMode="cover"
+            source={{
+              uri:
+                'https://cdn.pixabay.com/photo/2015/08/02/22/18/barley-872000_960_720.jpg',
+            }}
+          />
         </Gestures>
 
-        <View style={{position: 'absolute', bottom: 0, marginLeft: 20}}>
+        <View style={{position: 'absolute', bottom: -400, marginLeft: 20}}>
           <RoundedButton
             title="Image"
             functionClick={() =>
