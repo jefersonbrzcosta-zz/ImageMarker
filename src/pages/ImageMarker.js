@@ -148,8 +148,7 @@ function ImageMarker() {
                         left:
                           (marker.styleMarker.left +
                             (392 * imageScale - 392) / 2) *
-                            (markerScale / imageScale) -
-                          25,
+                          (markerScale / imageScale),
                         // top:
                         //   marker.styleMarker.top -
                         //   (imageScale * 300 - 300) / 2 -
@@ -158,7 +157,7 @@ function ImageMarker() {
                         top:
                           ((300 * imageScale - 300) / 2) *
                             (markerScale / imageScale) -
-                          25,
+                          (100 * imageScale) / 8,
                       },
                       // {transform: marker.styleMarker.transform},
                       {
