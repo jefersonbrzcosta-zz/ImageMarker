@@ -8,13 +8,15 @@ import Marker from '../components/Marker';
 function ImageMarker() {
   const [image, setImage] = useState({
     move: true,
-    selected: false,
+    zoom: true,
+    rotate: false,
   });
   const [markers, setMarkers] = useState([
     {
-      move: false,
-      selected: false,
-      id: 1,
+      move: true,
+      zoom: true,
+      rotate: false,
+      id: 0,
     },
   ]);
   const [fixedMarkers, setFixedMarkers] = useState([]);
@@ -24,12 +26,10 @@ function ImageMarker() {
   const imageWidth = dimensions.width;
 
   const calculateStyles = (styles) => {
-    // console.log(styles, 'marker');
-    // console.log(imageStyle, 'image in');
-    let scaleMagicNumber = 0;
+    console.log(styles, 'marker');
+    console.log(imageStyle, 'image in');
     let calcScaleLeft;
     let calcScaleTop;
-    let calc1;
     //Filter array to get only scale prop
     const filteredTransform = styles.transform.filter((item) => item.scale);
     const filteredImageTransform =
@@ -50,24 +50,28 @@ function ImageMarker() {
     };
 
     const {imageSty, marker} = stylesCheck;
-    console.log(marker.scale, 'marker Scale');
-    console.log(imageSty.scale, 'marker Scale');
 
     //check if image/marker was scale
-    const isImageScale = imageStyle ? imageSty.scale !== 1 : false;
+    const isImageScale = imageSty ? imageSty.scale !== 1 : false;
     const isMarkerScale = marker.scale !== 1;
 
-    //compensate marker scale when fix marker
-    // if ((!isMarkerScale && !isImageScale) || (isMarkerScale && !isImageScale)) {
-    scaleMagicNumber = 155;
-    calc1 = styles.left - (marker.scale * scaleMagicNumber - scaleMagicNumber);
-    calcScaleLeft = calc1 - imageSty.left;
+    //if no image scale run this
+    // if (!isImageScale) {
+
+    const extraCalc = imageSty.scale === 1 ? 1 : 12.5 * imageSty.scale;
+    calcScaleLeft = (marker.left - imageSty.left) / imageSty.scale - extraCalc;
     calcScaleTop = marker.top - imageSty.top;
     // }
 
-    //compensate image scale when fix marker
-    // if (!isMarkerScale && isImageScale) {
-    //   calcScaleLeft = calc1;
+    // calcScaleLeft = marker.left;
+    // calcScaleTop = marker.top;
+    // console.log(marker.left, 'marker.left');
+    // console.log(imageSty.left, 'imageSty.left');
+
+    // compensate image scale when fix marker
+    // if (isMarkerScale && isImageScale) {
+    //   calcScaleLeft = marker.left;
+    //   calcScaleTop = marker.top;
     // }
 
     const results = {
@@ -101,12 +105,12 @@ function ImageMarker() {
         marginTop: 50,
       }}>
       <Gestures
-        rotatable={false}
+        style={{position: 'absolute'}}
+        rotatable={image.rotate}
         draggable={image.move}
-        scalable={image.move}
+        scalable={image.zoom}
         onStart={(event, styles) => {
-          console.log(styles, 'image start');
-          setImageStyle(styles);
+          // console.log(styles, 'image start');
         }}
         onEnd={(event, styles) => {
           console.log(styles, 'image ends');
@@ -115,6 +119,7 @@ function ImageMarker() {
         <View>
           <Image
             style={{
+              position: 'absolute',
               width: imageWidth,
               height: 300,
             }}
@@ -161,11 +166,15 @@ function ImageMarker() {
       <View>
         {markers.map((marker) => (
           <Gestures
-            rotatable={false}
+            style={{position: 'absolute'}}
+            rotatable={marker.rotate}
+            draggable={marker.move}
+            scalable={marker.zoom}
             onStart={(event, styles) => {
               console.log(styles, 'markerStart');
             }}
             onEnd={(event, styles) => {
+              console.log(styles, 'markerEnd');
               setMarkerStyle(calculateStyles(styles));
             }}>
             <Marker key={marker.id} id={marker.id} selected={marker.selected} />
