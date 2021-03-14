@@ -22,23 +22,22 @@ function ImageMarker() {
   const [imageStyle, setImageStyle] = useState();
   const dimensions = Dimensions.get('window');
   const imageWidth = dimensions.width;
-  console.log(imageStyle, 'image out');
 
   const calculateStyles = (styles) => {
-    console.log(styles, 'marker');
-    console.log(imageStyle, 'image in');
+    // console.log(styles, 'marker');
+    // console.log(imageStyle, 'image in');
     let scaleMagicNumber = 0;
     let calcScaleLeft;
+    let calcScaleTop;
     let calc1;
     //Filter array to get only scale prop
     const filteredTransform = styles.transform.filter((item) => item.scale);
     const filteredImageTransform =
       imageStyle && imageStyle.transform.filter((item) => item.scale);
-    console.log(filteredImageTransform);
 
     // default options if undefined props:
     const stylesCheck = {
-      image: {
+      imageSty: {
         top: imageStyle ? imageStyle.top : 0,
         left: imageStyle ? imageStyle.left : 0,
         scale: filteredImageTransform ? filteredImageTransform[0].scale : 1,
@@ -50,36 +49,38 @@ function ImageMarker() {
       },
     };
 
-    const {image, marker} = stylesCheck;
+    const {imageSty, marker} = stylesCheck;
+    console.log(marker.scale, 'marker Scale');
+    console.log(imageSty.scale, 'marker Scale');
 
     //check if image/marker was scale
-    const isImageScale = imageStyle ? image.scale !== 1 : false;
+    const isImageScale = imageStyle ? imageSty.scale !== 1 : false;
     const isMarkerScale = marker.scale !== 1;
 
     //compensate marker scale when fix marker
-    if ((!isMarkerScale && !isImageScale) || (isMarkerScale && !isImageScale)) {
-      scaleMagicNumber = 155;
-      calc1 =
-        styles.left - (marker.scale * scaleMagicNumber - scaleMagicNumber);
-      calcScaleLeft = calc1;
-    }
+    // if ((!isMarkerScale && !isImageScale) || (isMarkerScale && !isImageScale)) {
+    scaleMagicNumber = 155;
+    calc1 = styles.left - (marker.scale * scaleMagicNumber - scaleMagicNumber);
+    calcScaleLeft = calc1 - imageSty.left;
+    calcScaleTop = marker.top - imageSty.top;
+    // }
 
     //compensate image scale when fix marker
-    if (!isMarkerScale && isImageScale) {
-      console.log('marker não tem scale, mas imagem tem');
-      calcScaleLeft = calc1;
-    }
+    // if (!isMarkerScale && isImageScale) {
+    //   calcScaleLeft = calc1;
+    // }
 
     const results = {
       left: calcScaleLeft,
-      top: styles.top,
+      top: calcScaleTop,
       transform: [
         {rotate: '0deg'},
         {
-          scale: imageStyle ? marker.scale / image.scale : marker.scale,
+          scale: imageStyle ? marker.scale / imageSty.scale : marker.scale,
         },
       ],
     };
+    isNaN(results.transform[1].scale) && alert('Scale NaN');
     console.log(results, 'results');
 
     return results;
@@ -101,10 +102,14 @@ function ImageMarker() {
       }}>
       <Gestures
         rotatable={false}
-        draggable={false}
+        draggable={image.move}
         scalable={image.move}
+        onStart={(event, styles) => {
+          console.log(styles, 'image start');
+          setImageStyle(styles);
+        }}
         onEnd={(event, styles) => {
-          console.log(styles, 'changing image styles');
+          console.log(styles, 'image ends');
           setImageStyle(styles);
         }}>
         <View>
@@ -133,7 +138,15 @@ function ImageMarker() {
                     left: marker.style.left,
                     top: marker.style.top,
                   },
-                  {transform: [{scale: marker.style.transform[1].scale}]},
+                  {
+                    transform: [
+                      {
+                        scale: isNaN(marker.style.transform[1].scale)
+                          ? 1
+                          : marker.style.transform[1].scale,
+                      },
+                    ],
+                  },
                 ]}>
                 <Marker
                   key={marker.id}
@@ -149,9 +162,9 @@ function ImageMarker() {
         {markers.map((marker) => (
           <Gestures
             rotatable={false}
-            // onStart={(event, styles) => {
-            //   console.log(styles, 'markerStart');
-            // }}
+            onStart={(event, styles) => {
+              console.log(styles, 'markerStart');
+            }}
             onEnd={(event, styles) => {
               setMarkerStyle(calculateStyles(styles));
             }}>
@@ -169,7 +182,8 @@ function ImageMarker() {
         />
         {markers.map((marker) => (
           <RoundedButton
-            title="Marker: "
+            title="Marker"
+            noIcon
             functionClick={() => fixMarker(marker)}
             active={image.move}
           />
