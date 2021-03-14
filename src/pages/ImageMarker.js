@@ -21,37 +21,68 @@ function ImageMarker() {
   const [markerStyle, setMarkerStyle] = useState();
   const [imageStyle, setImageStyle] = useState();
   const dimensions = Dimensions.get('window');
-  const imageHeight = Math.round((dimensions.width * 9) / 16);
   const imageWidth = dimensions.width;
-  const makeMarkerSelected = (id) => {
-    const array = markers.map((marker) => {
-      if (marker.id === id) {
-        return {...marker, selected: !marker.selected};
-      } else {
-        return marker;
-      }
-    });
-    setMarkers(array);
-  };
+  console.log(imageStyle, 'image out');
 
   const calculateStyles = (styles) => {
-    const scaleMagicNumber = 155;
+    console.log(styles, 'marker');
+    console.log(imageStyle, 'image in');
+    let scaleMagicNumber = 0;
+    let calcScaleLeft;
+    let calc1;
+    //Filter array to get only scale prop
     const filteredTransform = styles.transform.filter((item) => item.scale);
-    const calcScaleLeft =
-      filteredTransform[0].scale * scaleMagicNumber - scaleMagicNumber;
+    const filteredImageTransform =
+      imageStyle && imageStyle.transform.filter((item) => item.scale);
+    console.log(filteredImageTransform);
 
-    return {
-      left: styles.left - calcScaleLeft,
+    // default options if undefined props:
+    const stylesCheck = {
+      image: {
+        top: imageStyle ? imageStyle.top : 0,
+        left: imageStyle ? imageStyle.left : 0,
+        scale: filteredImageTransform ? filteredImageTransform[0].scale : 1,
+      },
+      marker: {
+        top: styles.top,
+        left: styles.left,
+        scale: filteredTransform[0].scale ? filteredTransform[0].scale : 1,
+      },
+    };
+
+    const {image, marker} = stylesCheck;
+
+    //check if image/marker was scale
+    const isImageScale = imageStyle ? image.scale !== 1 : false;
+    const isMarkerScale = marker.scale !== 1;
+
+    //compensate marker scale when fix marker
+    if ((!isMarkerScale && !isImageScale) || (isMarkerScale && !isImageScale)) {
+      scaleMagicNumber = 155;
+      calc1 =
+        styles.left - (marker.scale * scaleMagicNumber - scaleMagicNumber);
+      calcScaleLeft = calc1;
+    }
+
+    //compensate image scale when fix marker
+    if (!isMarkerScale && isImageScale) {
+      console.log('marker não tem scale, mas imagem tem');
+      calcScaleLeft = calc1;
+    }
+
+    const results = {
+      left: calcScaleLeft,
       top: styles.top,
       transform: [
         {rotate: '0deg'},
         {
-          scale: imageStyle
-            ? filteredTransform[0].scale / imageStyle.transform[0].scale
-            : filteredTransform[0].scale,
+          scale: imageStyle ? marker.scale / image.scale : marker.scale,
         },
       ],
     };
+    console.log(results, 'results');
+
+    return results;
   };
 
   const fixMarker = (marker) => {
@@ -59,7 +90,6 @@ function ImageMarker() {
       ...prevFixMarkers,
       {marker, style: markerStyle},
     ]);
-    setMarkerStyle({});
   };
 
   return (
@@ -71,9 +101,10 @@ function ImageMarker() {
       }}>
       <Gestures
         rotatable={false}
-        draggable={image.move}
+        draggable={false}
         scalable={image.move}
         onEnd={(event, styles) => {
+          console.log(styles, 'changing image styles');
           setImageStyle(styles);
         }}>
         <View>
@@ -92,9 +123,9 @@ function ImageMarker() {
           <>
             <Gestures
               key={marker.id}
-              rotatable={marker.move}
-              draggable={marker.move}
-              scalable={marker.move}>
+              rotatable={false}
+              draggable={false}
+              scalable={false}>
               <View
                 style={[
                   {
@@ -118,9 +149,9 @@ function ImageMarker() {
         {markers.map((marker) => (
           <Gestures
             rotatable={false}
-            onStart={(event, styles) => {
-              console.log(styles, 'marker start');
-            }}
+            // onStart={(event, styles) => {
+            //   console.log(styles, 'markerStart');
+            // }}
             onEnd={(event, styles) => {
               setMarkerStyle(calculateStyles(styles));
             }}>
