@@ -34,6 +34,26 @@ function ImageMarker() {
     setMarkers(array);
   };
 
+  const calculateStyles = (styles) => {
+    const scaleMagicNumber = 155;
+    const filteredTransform = styles.transform.filter((item) => item.scale);
+    const calcScaleLeft =
+      filteredTransform[0].scale * scaleMagicNumber - scaleMagicNumber;
+
+    return {
+      left: styles.left - calcScaleLeft,
+      top: styles.top,
+      transform: [
+        {rotate: '0deg'},
+        {
+          scale: imageStyle
+            ? filteredTransform[0].scale / imageStyle.transform[0].scale
+            : filteredTransform[0].scale,
+        },
+      ],
+    };
+  };
+
   const fixMarker = (marker) => {
     setFixedMarkers((prevFixMarkers) => [
       ...prevFixMarkers,
@@ -102,23 +122,7 @@ function ImageMarker() {
               console.log(styles, 'marker start');
             }}
             onEnd={(event, styles) => {
-              console.log(styles, 'marker end');
-              const filteredTransform = styles.transform.filter(
-                (item) => item.scale,
-              );
-              setMarkerStyle({
-                left: styles.left,
-                top: styles.top,
-                transform: [
-                  {rotate: '0deg'},
-                  {
-                    scale: imageStyle
-                      ? filteredTransform[0].scale /
-                        imageStyle.transform[0].scale
-                      : filteredTransform[0].scale,
-                  },
-                ],
-              });
+              setMarkerStyle(calculateStyles(styles));
             }}>
             <Marker key={marker.id} id={marker.id} selected={marker.selected} />
           </Gestures>
