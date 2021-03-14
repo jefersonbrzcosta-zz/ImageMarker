@@ -1,19 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {
-  View,
-  Image,
-  Dimensions,
-  TouchableWithoutFeedback,
-  Text,
-} from 'react-native';
+import {View, Image, Dimensions} from 'react-native';
 import Gestures from 'react-native-easy-gestures';
 import RoundedButton from '../components/RoundedButton';
 import Marker from '../components/Marker';
 
 function ImageMarker() {
   const [image, setImage] = useState({
-    move: false,
+    move: true,
     selected: false,
   });
   const [markers, setMarkers] = useState([
@@ -25,10 +19,10 @@ function ImageMarker() {
   ]);
   const [fixedMarkers, setFixedMarkers] = useState([]);
   const [markerStyle, setMarkerStyle] = useState();
+  const [imageStyle, setImageStyle] = useState();
   const dimensions = Dimensions.get('window');
   const imageHeight = Math.round((dimensions.width * 9) / 16);
   const imageWidth = dimensions.width;
-  console.log(fixedMarkers);
   const makeMarkerSelected = (id) => {
     const array = markers.map((marker) => {
       if (marker.id === id) {
@@ -55,7 +49,13 @@ function ImageMarker() {
         flex: 1,
         marginTop: 50,
       }}>
-      <Gestures rotatable={false} draggable={image.move} scalable={image.move}>
+      <Gestures
+        rotatable={false}
+        draggable={image.move}
+        scalable={image.move}
+        onEnd={(event, styles) => {
+          setImageStyle(styles);
+        }}>
         <View>
           <Image
             style={{
@@ -82,7 +82,7 @@ function ImageMarker() {
                     left: marker.style.left,
                     top: marker.style.top,
                   },
-                  {transform: marker.style.transform},
+                  {transform: [{scale: marker.style.transform[1].scale}]},
                 ]}>
                 <Marker
                   key={marker.id}
@@ -97,9 +97,28 @@ function ImageMarker() {
       <View>
         {markers.map((marker) => (
           <Gestures
+            rotatable={false}
+            onStart={(event, styles) => {
+              console.log(styles, 'marker start');
+            }}
             onEnd={(event, styles) => {
-              console.log(styles);
-              setMarkerStyle(styles);
+              console.log(styles, 'marker end');
+              const filteredTransform = styles.transform.filter(
+                (item) => item.scale,
+              );
+              setMarkerStyle({
+                left: styles.left,
+                top: styles.top,
+                transform: [
+                  {rotate: '0deg'},
+                  {
+                    scale: imageStyle
+                      ? filteredTransform[0].scale /
+                        imageStyle.transform[0].scale
+                      : filteredTransform[0].scale,
+                  },
+                ],
+              });
             }}>
             <Marker key={marker.id} id={marker.id} selected={marker.selected} />
           </Gestures>
