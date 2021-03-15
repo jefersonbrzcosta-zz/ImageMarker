@@ -5628,6 +5628,13 @@
   "resolved" "https://registry.npmjs.org/react-native-anchor-point/-/react-native-anchor-point-1.0.1.tgz"
   "version" "1.0.1"
 
+"react-native-drag-resize@^1.0.2":
+  "integrity" "sha512-NIqYWPqoaFtfEqN0x5Gn6oCKZUALXVlNmKG9oUtiPL7eOkXE8QjoDSMFoyu0bJbsGr0a7bF58695vnShhFCXJQ=="
+  "resolved" "https://registry.npmjs.org/react-native-drag-resize/-/react-native-drag-resize-1.0.2.tgz"
+  "version" "1.0.2"
+  dependencies:
+    "prop-types" "^15.7.2"
+
 "react-native-easy-gestures@^2.2.4":
   "integrity" "sha512-a8rIqkAiE9pySVXEbZS3qQpzpVI4036LHkQDdByDlXIBplQhq9KMYVz0z+UxHlSF4He34FDGfuE/52n0wpDe6Q=="
   "resolved" "https://registry.npmjs.org/react-native-easy-gestures/-/react-native-easy-gestures-2.2.4.tgz"
@@ -5649,7 +5656,7 @@
     "css-select" "^2.1.0"
     "css-tree" "^1.0.0-alpha.39"
 
-"react-native@>=0.46", "react-native@>=0.50.0", "react-native@>=0.62.0-rc.0 <0.64.0", "react-native@0.63.4":
+"react-native@>=0.46", "react-native@>=0.50.0", "react-native@>=0.62.0-rc.0 <0.64.0", "react-native@0.59.5", "react-native@0.63.4":
   "integrity" "sha512-I4kM8kYO2mWEYUFITMcpRulcy4/jd+j9T6PbIzR0FuMcz/xwd+JwHoLPa1HmCesvR1RDOw9o4D+OFLwuXXfmGw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.63.4.tgz"
   "version" "0.63.4"
@@ -5697,7 +5704,7 @@
     "react-is" "^16.8.6"
     "scheduler" "^0.19.1"
 
-"react@*", "react@^16.13.1", "react@^16.8.0 || ^17.0.0", "react@16.13.1":
+"react@*", "react@^16.13.1", "react@^16.8.0 || ^17.0.0", "react@16.13.1", "react@16.8.3":
   "integrity" "sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w=="
   "resolved" "https://registry.npmjs.org/react/-/react-16.13.1.tgz"
   "version" "16.13.1"

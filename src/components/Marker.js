@@ -2,14 +2,15 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 
-function Marker({id, selected}) {
+function Marker({id, selected, deleteMarker}) {
   return (
     <View
       style={{
-        position: 'relative',
+        // position: 'absolute',
         width: 100,
         height: 100,
         backgroundColor: 'rgba(255, 255, 255, 0.3)',
+        zIndex: -10000,
       }}>
       <View
         style={{
@@ -22,6 +23,30 @@ function Marker({id, selected}) {
           alignItems: 'center',
         }}>
         <Text style={{color: 'white', fontWeight: 'bold'}}>{id}</Text>
+      </View>
+      <View
+        style={{
+          // backgroundColor: 'red',
+          // borderTopWidth: 3,
+          // borderRightWidth: 3,
+          position: 'absolute',
+          left: 0,
+        }}>
+        {deleteMarker ? (
+          <Text
+            style={{
+              color: 'black',
+              fontWeight: 'bold',
+              fontSize: 22,
+              // zIndex: 100000,
+              backgroundColor: 'red',
+            }}
+            onPress={deleteMarker}>
+            x
+          </Text>
+        ) : (
+          <></>
+        )}
       </View>
       <View
         style={{

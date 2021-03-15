@@ -11,7 +11,7 @@ import Gestures from 'react-native-easy-gestures';
 import RoundedButton from '../components/RoundedButton';
 import Marker from '../components/Marker';
 import MarkerOnImage from '../components/MarkerOnImage';
-
+import {DragResizeBlock} from 'react-native-drag-resize';
 function ImageMarker() {
   const [image, setImage] = useState({
     move: false,
@@ -21,7 +21,7 @@ function ImageMarker() {
     {
       move: false,
       selected: false,
-      id: 1,
+      id: 0,
     },
   ]);
   const [fixedMarkers, setFixedMarkers] = useState([]);
@@ -77,12 +77,12 @@ function ImageMarker() {
       transform: [
         {
           scale: imageStyle?.transform[0]?.scale
-            ? imageStyle?.transform[0].scale
+            ? imageStyle?.transform[0]?.scale
             : 1,
         },
         {
           rotate: imageStyle?.transform[1]?.rotate
-            ? imageStyle?.transform[1].rotate
+            ? imageStyle?.transform[1]?.rotate
             : '0deg',
         },
       ],
@@ -94,6 +94,22 @@ function ImageMarker() {
     ]);
     setMarkerStyle({});
   };
+
+  function deleteMarker(index) {
+    console.log(index);
+
+    const temp = [...fixedMarkers];
+
+    temp.splice(index, 1);
+
+    // const newFixedMarkers = fixedMarkers.slice();
+    // newFixedMarkers.splice(index, 1);
+    // console.log(markers);
+
+    console.log(temp);
+    setFixedMarkers(temp);
+    // alert(id);
+  }
 
   return (
     <>
@@ -107,11 +123,13 @@ function ImageMarker() {
           // backgroundColor: 'reds',
         }}>
         <Gestures
-          // style={{
-          //   backgroundColor: 'blue',
-          //   // height: 100,
-          //   // maxWidth: 100,
-          // }}
+          // style={
+          //   {
+          //     // backgroundColor: 'blue',
+          //     // height: 100,
+          //     // maxWidth: 100,
+          //   }
+          // }
           rotatable={false}
           draggable={image.move}
           scalable={image.move}
@@ -141,23 +159,29 @@ function ImageMarker() {
                   draggable={marker.move}
                   scalable={marker.move}>
                   <View
-                    // style={{top: -100}}
                     style={[
                       {
-                        position: 'absolute',
+                        flexDirection: 'row',
+                        display: 'flex',
+                        backgroundColor: 'blue',
+                        // position: 'absolute',
                         left:
-                          (marker.styleMarker.left +
-                            (392 * imageScale - 392) / 2) *
-                          (markerScale / imageScale),
+                          // (marker.styleMarker.left +
+                          //   (392 * imageScale - 392) / 2) *
+                          // (markerScale / imageScale),
+                          // marker.styleMarker.left,
+                          50,
                         // top:
                         //   marker.styleMarker.top -
                         //   (imageScale * 300 - 300) / 2 -
                         //   180,
                         // top: -250,
                         top:
-                          ((300 * imageScale - 300) / 2) *
-                            (markerScale / imageScale) -
-                          (100 * imageScale) / 8,
+                          //  marker.styleMarker.top,
+                          50,
+                        // ((300 * imageScale - 300) / 2) *
+                        //   (markerScale / imageScale) +
+                        // 25,
                       },
                       // {transform: marker.styleMarker.transform},
                       {
@@ -171,10 +195,11 @@ function ImageMarker() {
                         ],
                       },
                     ]}>
-                    <MarkerOnImage
-                      key={marker.id}
-                      id={marker.id}
+                    <Marker
+                      // key={marker.id}
+                      id={index}
                       selected={marker.selected}
+                      deleteMarker={() => deleteMarker(index)}
                       // scale={marker.}
                     />
                   </View>
@@ -182,7 +207,7 @@ function ImageMarker() {
               </>
             );
           })}
-          <Image
+          {/* <Image
             style={{
               width: imageWidth,
               height: imageHeight,
@@ -194,7 +219,7 @@ function ImageMarker() {
               uri:
                 'https://cdn.pixabay.com/photo/2015/08/02/22/18/barley-872000_960_720.jpg',
             }}
-          />
+          /> */}
         </Gestures>
 
         <View style={{position: 'absolute', bottom: -400, marginLeft: 20}}>
@@ -214,15 +239,29 @@ function ImageMarker() {
           ))}
         </View>
       </View>
-      <View style={{position: 'absolute', top: 0}}>
-        {markers.map((marker) => (
-          <Gestures
-            onEnd={(event, styles) => {
-              console.log(styles, 'marker');
-              setMarkerStyle(styles);
-            }}>
-            <Marker key={marker.id} id={marker.id} selected={marker.selected} />
-          </Gestures>
+      <View>
+        {markers.map((marker, index) => (
+          // <Gestures
+          //   onEnd={(event, styles) => {
+          //     console.log(styles, 'marker');
+          //     setMarkerStyle(styles);
+          //   }}>
+          <DragResizeBlock x={0} y={0}>
+            {/* <Marker
+              // key={index}
+              // id={index}
+              selected={marker.selected}
+              // deleteMarker={() => deleteMarker(index)}
+            /> */}
+            <View
+              style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'red',
+              }}
+            />
+          </DragResizeBlock>
+          // </Gestures>
         ))}
       </View>
     </>
