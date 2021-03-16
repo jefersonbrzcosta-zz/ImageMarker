@@ -51,28 +51,9 @@ function ImageMarker() {
 
     const {imageSty, marker} = stylesCheck;
 
-    //check if image/marker was scale
-    const isImageScale = imageSty ? imageSty.scale !== 1 : false;
-    const isMarkerScale = marker.scale !== 1;
-
-    //if no image scale run this
-    // if (!isImageScale) {
-
     const extraCalc = imageSty.scale === 1 ? 1 : 12.5 * imageSty.scale;
     calcScaleLeft = (marker.left - imageSty.left) / imageSty.scale - extraCalc;
-    calcScaleTop = marker.top - imageSty.top;
-    // }
-
-    // calcScaleLeft = marker.left;
-    // calcScaleTop = marker.top;
-    // console.log(marker.left, 'marker.left');
-    // console.log(imageSty.left, 'imageSty.left');
-
-    // compensate image scale when fix marker
-    // if (isMarkerScale && isImageScale) {
-    //   calcScaleLeft = marker.left;
-    //   calcScaleTop = marker.top;
-    // }
+    calcScaleTop = (marker.top - imageSty.top) / imageSty.scale - extraCalc;
 
     const results = {
       left: calcScaleLeft,
